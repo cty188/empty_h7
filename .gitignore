@@ -1,0 +1,31 @@
+# PlatformIO
+.pio/
+.vscode/
+*.tmp
+*.bak
+
+# Build directories
+build/
+.pioenvs/
+.piolibdeps/
+
+# IDE files
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# STM32CubeMX backup files
+*.ioc.bak
+*.tmp
+*_backup/
+
+# Debug files
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
