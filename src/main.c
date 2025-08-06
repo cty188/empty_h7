@@ -1,5 +1,7 @@
 #include "main.h"
 #include "gpio.h"
+#include <lvgl.h>
+#include <stdio.h>
 
 // 函数声明
 void SystemClock_Config(void);
@@ -9,31 +11,49 @@ void Error_Handler(void);
 volatile uint32_t counter = 0;
 volatile uint8_t led_state = 0;
 
+// 重定向printf到串口（如果需要的话）
+#ifdef __GNUC__
+int _write(int file, char *ptr, int len) {
+    // 这里可以添加串口输出代码
+    return len;
+}
+#endif
+
 // 使用STM32CubeMX生成的代码
 int main(void)
 {
     HAL_Init();
-  SystemClock_Config();
-  MX_GPIO_Init();
-
-  // 调试断点：在这里设置断点可以检查初始化是否完成
-  counter = 0;
-
-  while (1)
-  {
-    // 主循环 - 在这里设置断点可以逐步执行
-    counter++;
+    SystemClock_Config();
+    MX_GPIO_Init();
+    lv_init();
     
-    // 简单的延时和LED切换逻辑（如果有LED的话）
-    if (counter >= 100000) {
-      counter = 0;
-      led_state = !led_state;
-      // 在这里设置断点可以观察变量变化
+    // 调试断点：在这里设置断点可以检查初始化是否完成
+    counter = 0;
+    
+    // 如果您有串口配置，可以打印启动信息
+    // printf("STM32H723 Started!\r\n");
+
+    while (1)
+    {
+        // 主循环 - 在这里设置断点可以逐步执行
+        counter++;
+        
+        // 简单的延时和LED切换逻辑（如果有LED的话）
+        if (counter >= 100000) {
+            counter = 0;
+            led_state = !led_state;
+            // 在这里设置断点可以观察变量变化
+            
+            // 如果您有串口配置，可以打印状态
+            // printf("Counter reset, LED state: %d\r\n", led_state);
+        }
+        
+        // LVGL任务处理
+        lv_timer_handler();
+        
+        // 可以在这里添加更多功能
+        HAL_Delay(1);
     }
-    
-    // 可以在这里添加更多功能
-    HAL_Delay(1);
-  }
 }
 
 // SystemClock_Config函数应该从原始main.c复制过来，但现在先用一个简单的版本
